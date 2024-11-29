@@ -1,0 +1,9 @@
+---
+- name: Create a reverseproxy-nw docker network
+  community.docker.docker_network:
+    name: reverseproxy-nw
+    driver: bridge
+    ipam_config:
+      - subnet: 172.18.0.0/16
+        gateway: 172.18.0.1
+        iprange: 172.18.0.0/16

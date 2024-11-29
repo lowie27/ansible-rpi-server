@@ -1,0 +1,22 @@
+---
+- Services:
+    - Portainer:
+        icon: portainer.png
+        href: https://portainer.local.your.domain/
+        description: Docker Container Management
+        widget:
+          type: portainer
+          url: https://portainer:9443
+          env: 2
+          key: changeme
+    - Speedtest:
+        icon: librespeed.png
+        href: https://speedtest.local.your.domain/
+        description: Local Network Speedtest
+    - Traefik:
+        icon: traefik.png
+        href: https://traefik.local.your.domain/
+        description: Reverse Proxy & Load Balancer
+    - Watchtower:
+        icon: watchtower.png
+        description: Docker Image Updates

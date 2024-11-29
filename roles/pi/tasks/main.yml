@@ -1,0 +1,11 @@
+---
+- name: Repo setup
+  ansible.builtin.import_tasks: repo_setup.yml
+- name: Install Docker
+  ansible.builtin.import_tasks: setup_fancy_terminal.yml
+- name: Install Docker
+  ansible.builtin.import_tasks: install_docker.yml
+- name: Create Docker networks
+  ansible.builtin.import_tasks: create_docker_network.yml
+- name: Deploy Docker containers
+  ansible.builtin.import_tasks: deploy_docker_containers.yml

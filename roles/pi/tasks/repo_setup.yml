@@ -1,0 +1,28 @@
+---
+- name: Add docker apt repository key
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/debian/gpg
+    dest: /etc/apt/trusted.gpg.d/docker.asc
+    mode: "0644"
+    force: true
+
+- name: Add docker repository
+  ansible.builtin.apt_repository:
+    repo: deb [arch=arm64 signed-by=/etc/apt/trusted.gpg.d/docker.asc] https://download.docker.com/linux/debian bullseye stable
+    state: present
+
+- name: Add eza apt repository key
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/eza-community/eza/main/deb.asc
+    dest: /etc/apt/trusted.gpg.d/eza.asc
+    mode: "0644"
+    force: true
+
+- name: Add eza repository
+  ansible.builtin.apt_repository:
+    repo: deb [arch=arm64 signed-by=/etc/apt/trusted.gpg.d/eza.asc] http://deb.gierens.de stable main
+    state: present
+
+- name: Update apt
+  ansible.builtin.apt:
+    update_cache: true

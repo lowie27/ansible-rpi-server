@@ -1,0 +1,10 @@
+---
+# .ansible-lint
+
+profile: production
+
+exclude_paths:
+  - .github/
+  - files/
+
+offline: false

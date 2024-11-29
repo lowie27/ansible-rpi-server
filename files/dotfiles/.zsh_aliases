@@ -1,0 +1,22 @@
+# ls
+alias ls='eza -alg --color=always --group-directories-first'
+alias la='eza -ag --color=always --group-directories-first'
+alias ll='eza -lg --color=always --group-directories-first'
+alias lt='eza -Tg --color=always --group-directories-first'
+
+# git
+alias addall='git add .'
+alias branch='git branch'
+alias checkout='git checkout'
+alias commit='git commit -m'
+alias amend='git commit --amend'
+alias fetch='git fetch'
+alias pull='git pull origin'
+alias push='git push origin'
+alias gs='git status'
+alias glog='git log --graph --decorate --oneline'
+
+# cd
+alias ..='cd ..'
+alias .2='cd ../..'
+alias .3='cd ../../..'

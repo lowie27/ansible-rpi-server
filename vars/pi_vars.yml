@@ -1,0 +1,4 @@
+---
+user: admin
+group: admin
+path_to_appdata: /home/{{ user }}/appdata

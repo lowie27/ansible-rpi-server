@@ -1,0 +1,28 @@
+---
+- name: Example from an Ansible Playbook
+  ansible.builtin.ping:
+  register: output
+
+- name: Output previous command
+  ansible.builtin.debug:
+    msg: "{{ output.ping }}"
+
+- name: Display ansible variables
+  ansible.builtin.shell: |
+    echo path_to_appdata: "{{ path_to_appdata }}"
+    echo user: "{{ user }}"
+    echo group: "{{ group }}"
+  register: output
+  changed_when: false
+
+- name: Debug output from previous task
+  ansible.builtin.debug:
+    var: output.stdout_lines
+
+- name: Make tmp directory
+  ansible.builtin.file:
+    path: /root/.ansible/tmp
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"

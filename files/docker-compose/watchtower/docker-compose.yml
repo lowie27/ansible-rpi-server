@@ -1,0 +1,22 @@
+---
+services:
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    environment:
+      WATCHTOWER_NOTIFICATIONS: shoutrrr
+      WATCHTOWER_NOTIFICATION_URL: ${WATCHTOWER_NOTIFICATION_URL}
+      WATCHTOWER_NOTIFICATION_TEMPLATE: "{{.Message}}{{println}}{{end}}"
+      TZ: ${TZ}
+      WATCHTOWER_MONITOR_ONLY: "false"
+      WATCHTOWER_SCHEDULE: 0 0 4 * * 6
+      WATCHTOWER_HTTP_API_TOKEN: ${WATCHTOWER_HTTP_API_TOKEN}
+      WATCHTOWER_HTTP_API_METRICS: "true"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+
+networks:
+  default:
+    name: reverseproxy-nw
+    external: true

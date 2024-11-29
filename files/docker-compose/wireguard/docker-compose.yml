@@ -1,0 +1,31 @@
+---
+services:
+  wireguard:
+    image: ghcr.io/linuxserver/wireguard:latest
+    container_name: wireguard
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - SERVERURL=${SERVER_URL}
+      - SERVERPORT=51820
+      - PEERS=5
+      - PEERDNS=${PEER_DNS_SERVER}
+      - INTERNAL_SUBNET=10.13.13.0
+      - ALLOWEDIPS=0.0.0.0/0
+    volumes:
+      - ./config:/config
+      - ./modules:/lib/modules
+    ports:
+      - 51820:51820/udp
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: always
+
+networks:
+  default:
+    name: reverseproxy-nw
+    external: true

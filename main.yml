@@ -1,0 +1,14 @@
+---
+- name: Main
+  hosts: all
+  become: true
+  gather_facts: true
+  vars_files:
+    - vars/pi_vars.yml
+
+  pre_tasks:
+    - name: General
+      ansible.builtin.import_tasks: tasks/pre_tasks.yml
+
+  roles:
+    - pi

@@ -1,0 +1,10 @@
+---
+- name: Install powerline-shell
+  ansible.builtin.pip:
+    name: powerline-shell
+  register: output
+  changed_when: "'Requirement already satisfied: powerline-shell' not in output.stdout"
+
+- name: Debug output previous task
+  ansible.builtin.debug:
+    msg: "{{ output.stdout }}"

@@ -1,0 +1,64 @@
+---
+- name: Make appdata directory
+  ansible.builtin.file:
+    path: "{{ path_to_appdata }}/"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: "0755"
+
+- name: Copy docker compose folders
+  ansible.builtin.copy:
+    src: files/docker-compose/
+    dest: "{{ path_to_appdata }}/"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: "0755"
+
+- name: Change acme.json permission
+  ansible.builtin.file:
+    path: "{{ path_to_appdata }}/traefik/config/cloudflare/acme.json"
+    state: file
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: "0600"
+
+- name: Find subdirectories in appdata folder
+  ansible.builtin.find:
+    paths: "{{ path_to_appdata }}/"
+    patterns: "*"
+    file_type: directory
+  register: subdirectories
+
+- name: Copy .env file
+  ansible.builtin.copy:
+    src: files/docker-compose/.env
+    dest: "{{ item.path }}"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: "0644"
+  loop: "{{ subdirectories.files }}"
+  loop_control:
+    label: "{{ item.path }}"
+
+- name: Pull multiple docker images
+  community.docker.docker_image_pull:
+    name: "{{ item.name }}"
+    tag: "{{ item.tag }}"
+  loop:
+    - { name: adguard/adguardhome, tag: "latest" }
+    - { name: ghcr.io/benphelps/homepage, tag: "latest" }
+    - { name: ghcr.io/linuxserver/librespeed, tag: "latest" }
+    - { name: portainer/portainer-ce, tag: "latest" }
+    - { name: traefik, tag: "2.10" }
+    - { name: containrrr/watchtower, tag: "latest" }
+    - { name: ghcr.io/linuxserver/wireguard, tag: "latest" }
+
+- name: Deploy docker compose stack
+  community.docker.docker_compose_v2:
+    project_src: "{{ item.path }}"
+    files:
+      - docker-compose.yml
+  loop: "{{ subdirectories.files }}"
+  loop_control:
+    label: "{{ item.path }}"

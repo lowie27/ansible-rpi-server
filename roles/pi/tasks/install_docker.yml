@@ -1,0 +1,28 @@
+---
+- name: Install docker dependencies
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+
+- name: Update apt and install docker-ce
+  ansible.builtin.apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+    update_cache: true
+
+- name: Add user to docker group
+  ansible.builtin.user:
+    name: "{{ user }}"
+    groups: docker
+    append: true
+
+- name: Add 1.1.1.1 to resolv.conf
+  ansible.builtin.lineinfile:
+    path: /etc/resolv.conf
+    line: "1.1.1.1"
