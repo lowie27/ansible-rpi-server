@@ -55,7 +55,18 @@ Run the following command to test the connection to the Raspberry Pi using Ansib
 ansible -i inventory.ini pi -m ping
 ```
 
-## Step 7: Run the Ansible Playbook
+## Step 7: Configuration Files
+
+Before running the Ansible playbook, you need to modify and include the following configuration files for the services you are setting up (such as Traefik, Portainer, and AdGuard):
+
+- [**.env**](/files/docker-compose/.env)
+- [**services.yaml**](files/docker-compose/homepage/config/services.yaml)
+- [**traefik.yml**](files/docker-compose/traefik/config/traefik.yml)
+- [**pi_vars.yml**](vars/pi_vars.yml)
+
+Ensure these configuration files are updated and correctly placed before continuing to the next step.
+
+## Step 8: Run the Ansible Playbook
 
 Once the connectivity test is successful, run the Ansible playbook:
 
@@ -63,7 +74,7 @@ Once the connectivity test is successful, run the Ansible playbook:
 ansible-playbook main.yml
 ```
 
-## Step 8: AdGuard Home Setup
+## Step 9: AdGuard Home Setup
 
 1. Open the following URL on your Raspberry Pi's IP address to begin the AdGuard setup:
    ```
@@ -93,7 +104,7 @@ ansible-playbook main.yml
 
    Once your DNS is set to `your-rpi-ip-here`, you can access other services.
 
-## Step 9: Portainer Setup
+## Step 10: Portainer Setup
 
 1. To restart Portainer, use the following command if there is a timeout:
    ```bash
@@ -109,7 +120,7 @@ ansible-playbook main.yml
 
 4. Set the API key in your `homepage/config/` directory.
 
-## Step 10: WireGuard Setup
+## Step 11: WireGuard Setup
 
 1. For WireGuard, set up a **domain name** and forward port `51820` on your router to the Raspberry Pi.
 
