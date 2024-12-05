@@ -96,9 +96,92 @@ SERVER_URL=your-public-ip-or-domain
 
 ### 2. **Pi User Variables**: [pi_vars.yml](vars/pi_vars.yml)
 
-This file contains the group and username for the Pi user. Ensure the information here matches your setup.
+This file contains the group and username for the Pi user. Ensure the information here matches your setup. If you need to change the file location, it's recommended to point it to an external hard drive, as the Raspberry Pi's SD card has limited storage capacity.
+
+`Setting Up an External Hard Drive for Raspberry Pi:`
+
+#### Step 1: Identify the External Hard Drive
+- Connect the external hard drive to your Raspberry Pi.
+- List connected block devices:
+  ```bash
+  lsblk
+  ```
+- Find your external drive, typically named `/dev/sdX` (e.g., `/dev/sdb`).
+
+- Get the UUID of the drive:
+  ```bash
+  sudo blkid /dev/sdX1
+  ```
+
+#### Step 2: Create a Mount Point
+- Create a directory to serve as the mount point:
+  ```bash
+  sudo mkdir -p /mnt/external_drive
+  ```
+
+#### Step 3: Create a Systemd Mount Unit
+- Create a `systemd` mount unit file. Replace `/mnt/external_drive` with your desired mount point. 
+  The mount path should be translated to a filename with `-` replacing `/`.
+
+  Example:
+  - Mount point: `/mnt/external_drive`
+  - Unit file: `/etc/systemd/system/mnt-external_drive.mount`
+
+- Open the file for editing:
+  ```bash
+  sudo nano /etc/systemd/system/mnt-external_drive.mount
+  ```
+
+- Add the following content:
+  ```ini
+  [Unit]
+  Description=Mount External Drive
+  After=network.target
+
+  [Mount]
+  What=/dev/disk/by-uuid/<UUID>
+  Where=/mnt/external_drive
+  Type=ext4  # Replace with the correct filesystem type
+  Options=defaults,noatime
+
+  [Install]
+  WantedBy=multi-user.target
+  ```
+
+  Replace `<UUID>` with the UUID from the `blkid` command, and update the `Type` field if necessary (e.g., `ntfs` for NTFS).
+
+#### Step 4: Enable and Start the Mount Unit
+- Reload `systemd` to recognize the new unit:
+  ```bash
+  sudo systemctl daemon-reload
+  ```
+
+- Enable the mount to start automatically on boot:
+  ```bash
+  sudo systemctl enable mnt-external_drive.mount
+  ```
+
+- Start the mount immediately:
+  ```bash
+  sudo systemctl start mnt-external_drive.mount
+  ```
+
+- Check the status of the mount:
+  ```bash
+  systemctl status mnt-external_drive.mount
+  ```
+
+#### Step 5: Verify and Test
+- Reboot your Raspberry Pi to confirm the drive mounts automatically.
+- If any issues arise, check the logs with:
+  ```bash
+  journalctl -xe
+  ```
 
 ---
+
+By following these steps, you ensure your external hard drive is consistently and securely mounted, 
+offloading storage demands from your Raspberry Pi's SD card.
 
 ### 3. **Homepage Services**: [services.yaml](files/docker-compose/homepage/config/services.yaml)
 
