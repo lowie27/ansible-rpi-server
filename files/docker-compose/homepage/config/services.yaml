@@ -1,8 +1,12 @@
 ---
 - Services:
+    - Adguard:
+        icon: adguard-home.png
+        href: http://your-pi-ip-here:8080
+        description: Advanced DNS Management, Privacy Protection, and Network Control
     - Portainer:
         icon: portainer.png
-        href: https://portainer.local.your.domain/
+        href: https://portainer.local.lowie.xyz/
         description: Docker Container Management
         widget:
           type: portainer
@@ -11,11 +15,11 @@
           key: changeme
     - Speedtest:
         icon: librespeed.png
-        href: https://speedtest.local.your.domain/
+        href: https://speedtest.local.lowie.xyz/
         description: Local Network Speedtest
     - Traefik:
         icon: traefik.png
-        href: https://traefik.local.your.domain/
+        href: https://traefik.local.lowie.xyz/
         description: Reverse Proxy & Load Balancer
     - Watchtower:
         icon: watchtower.png

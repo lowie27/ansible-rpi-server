@@ -1,8 +1,10 @@
 ---
 - name: Repo setup
   ansible.builtin.import_tasks: repo_setup.yml
-- name: Install Docker
+- name: Setup fancy terminal
   ansible.builtin.import_tasks: setup_fancy_terminal.yml
+- name: Samba setup
+  ansible.builtin.import_tasks: create_samba_share.yml
 - name: Install Docker
   ansible.builtin.import_tasks: install_docker.yml
 - name: Create Docker networks

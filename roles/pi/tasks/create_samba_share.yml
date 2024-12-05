@@ -1,0 +1,28 @@
+---
+- name: Install samba
+  ansible.builtin.apt:
+    name:
+      - samba
+      - ufw
+
+- name: Insert/Update samba config file
+  ansible.builtin.blockinfile:
+    path: /etc/samba/smb.conf
+    block: |
+      [admin]
+      comment = Samba share
+      path = /home/{{ user }}/appdata
+      read only = no
+      browsable = yes
+
+- name: Restart smbd service
+  ansible.builtin.systemd_service:
+    name: smbd
+    state: restarted
+    enabled: true
+
+- name: Allow Samba through the firewall
+  community.general.ufw:
+    rule: allow
+    name: Samba
+    state: enabled
