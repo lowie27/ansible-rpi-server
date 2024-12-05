@@ -13,12 +13,12 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.homepage.entrypoints=http
-      - traefik.http.routers.homepage.rule=Host(`homepage.${DOMAIN_NAME}`)
+      - traefik.http.routers.homepage.rule=Host(`homepage.${LOCAL_DOMAIN_NAME}`)
       - traefik.http.middlewares.homepage-https-redirect.redirectscheme.scheme=https
       - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
       - traefik.http.routers.homepage.middlewares=homepage-https-redirect
       - traefik.http.routers.homepage-secure.entrypoints=https
-      - traefik.http.routers.homepage-secure.rule=Host(`homepage.${DOMAIN_NAME}`)
+      - traefik.http.routers.homepage-secure.rule=Host(`homepage.${LOCAL_DOMAIN_NAME}`)
       - traefik.http.routers.homepage-secure.tls=true
       - traefik.http.routers.homepage-secure.service=homepage
       - traefik.http.services.homepage.loadbalancer.server.port=3000
