@@ -28,7 +28,7 @@ providers:
 certificatesResolvers:
   cloudflare:
     acme:
-      email: certificate@your.email
+      email: certificate@lowie.xyz
       storage: /cloudflare/acme.json
       dnsChallenge:
         provider: cloudflare

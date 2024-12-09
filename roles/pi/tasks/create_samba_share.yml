@@ -3,7 +3,6 @@
   ansible.builtin.apt:
     name:
       - samba
-      - ufw
 
 - name: Insert/Update samba config file
   ansible.builtin.blockinfile:
@@ -20,9 +19,4 @@
     name: smbd
     state: restarted
     enabled: true
-
-- name: Allow Samba through the firewall
-  community.general.ufw:
-    rule: allow
-    name: Samba
-    state: enabled
+  changed_when: false

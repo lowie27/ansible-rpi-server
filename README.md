@@ -1,4 +1,3 @@
-
 # Raspberry Pi Setup Guide with Ansible and Services
 
 This guide walks you through the process of setting up a Raspberry Pi 4 Model B running Raspberry Pi OS Lite (64-bit), installing required tools, configuring services like AdGuard, Portainer, and WireGuard, and managing everything using Ansible.
@@ -11,16 +10,67 @@ This guide walks you through the process of setting up a Raspberry Pi 4 Model B 
 
 ## Step 1: Flash Raspberry Pi OS on a microSD Card
 
-1. Install [Raspberry Pi Imager](https://www.raspberrypi.com/software/) on your host machine.
-2. Use the Imager to flash Raspberry Pi OS Lite (64-bit) onto the microSD card.
+1. **Install the Raspberry Pi Imager**  
+   Download and install the [Raspberry Pi Imager](https://www.raspberrypi.com/software/) on your host machine.
+
+2. **Flash Raspberry Pi OS Lite (64-bit)**  
+   Use the Imager to flash Raspberry Pi OS Lite (64-bit) onto the microSD card:
+
+   - **Choose your Raspberry Pi Device**: Select your device (e.g., Raspberry Pi 4).
+   - **Choose your OS**:
+     - Navigate to the **Raspberry Pi OS (other)** tab.
+     - Select **Raspberry Pi OS Lite (64-bit)**.
+   - **Choose Storage**: Select your microSD card as the target.
+
+3. **Apply OS Customization Settings**  
+   When prompted, click **Yes** to apply OS customization settings and modify the following:
+
+   ### General Settings
+
+   - **Set Hostname**: `rpi.local`
+   - **Username**: `admin`
+   - **Password**: `admin`
+   - **Time Zone**: `Europe/Brussels`
+   - **Keyboard Layout**: `be`
+
+   ### Services
+
+   - Enable **SSH**.
+   - Use **Password Authentication**.
+
+4. **Start the Flashing Process**  
+   Once all settings are configured, start the flashing process and wait for it to complete.
 
 ## Step 2: Find the Raspberry Pi's IP Address
 
-You can find your Raspberry Pi's IP address using one of the following methods:
+To connect to your Raspberry Pi, you need to determine its IP address. Use one of the following methods:
 
-1. **Router Interface**: Log into your router's web interface and check the list of connected devices. Look for your Raspberry Pi, often named "raspberrypi" or its hostname.
-2. **Network Scanner**: Use a network scanning tool like [Angry IP Scanner](https://angryip.org/download/) to discover devices on your network.
-3. **Direct Connection**: Connect a monitor to your Raspberry Pi using a mini HDMI to HDMI cable, and view the IP address directly on the screen after it boots up.
+### 1. **Ping the Hostname**
+
+- Open a terminal or command prompt on your host machine.
+- Run the following command:
+  ```bash
+  ping rpi.local
+  ```
+  This will attempt to resolve the hostname `rpi.local` to an IP address.
+
+### 2. **Use a Network Scanner**
+
+- Download and install a network scanning tool like [Angry IP Scanner](https://angryip.org/download/).
+- Scan your network to discover connected devices, and look for your Raspberry Pi's hostname or MAC address.
+
+### 3. **Direct Connection via Monitor**
+
+- Connect a monitor to your Raspberry Pi using a mini HDMI to HDMI cable.
+- Once the Raspberry Pi boots up, it will display its IP address on the screen.
+
+### 4. **Check Your Router's Interface**
+
+- Log into your router's web interface (refer to your router’s manual for instructions).
+- Locate the list of connected devices.
+- Look for your Raspberry Pi by its hostname (`rpi.local`) or default name (`raspberrypi`).
+
+Choose the method that best fits your setup and environment. Once you have the IP address, you can proceed to access your Raspberry Pi remotely.
 
 ## Step 3: SSH into Raspberry Pi
 
@@ -36,6 +86,7 @@ You can find your Raspberry Pi's IP address using one of the following methods:
    ssh-keygen -t ed25519 -C "your-host-machine-name"
    ```
 2. Copy the public key to the Raspberry Pi:
+
    ```zsh
    ssh-copy-id -i generated_key_name.pub admin@your-rpi-ip-here
    ```
@@ -85,12 +136,24 @@ CF_API_KEY=your-cloudflare-api-key
 For WireGuard configuration, update the following:
 
 - **`PEER_DNS_SERVER`**: Point this to your Pi's IP address.
-- **`SERVER_URL`**: Provide a public-facing domain name or IP address. If you have a domain name, create an **A Record** in your domain registrar pointing to your public IP. You can check your public IP [here](https://whatismyipaddress.com/).
+- **`SERVER_URL`**: Provide a public-facing domain name or IP address. If you have a domain name, create an **A Record** in your domain registrar pointing to your public IP.
 
 ```zsh
 PEER_DNS_SERVER=your-pi-ip-here
 SERVER_URL=your-public-ip-or-domain
 ```
+
+You can find your public IP address using one of the following methods:
+
+1. **Online Tool**:  
+   Visit the following website to see your public IP address:  
+   [https://whatismyipaddress.com/](https://whatismyipaddress.com/)
+
+2. **Command Line**:  
+   Run the following `curl` command in your terminal:
+   ```bash
+   curl https://ipinfo.io/ip
+   ```
 
 ---
 
@@ -101,6 +164,7 @@ This file contains the group and username for the Pi user. Ensure the informatio
 `Setting Up an External Hard Drive for Raspberry Pi:`
 
 #### Step 1: Identify the External Hard Drive
+
 - Connect the external hard drive to your Raspberry Pi.
 - List connected block devices:
   ```bash
@@ -114,25 +178,30 @@ This file contains the group and username for the Pi user. Ensure the informatio
   ```
 
 #### Step 2: Create a Mount Point
+
 - Create a directory to serve as the mount point:
   ```bash
   sudo mkdir -p /mnt/external_drive
   ```
 
 #### Step 3: Create a Systemd Mount Unit
-- Create a `systemd` mount unit file. Replace `/mnt/external_drive` with your desired mount point. 
+
+- Create a `systemd` mount unit file. Replace `/mnt/external_drive` with your desired mount point.
   The mount path should be translated to a filename with `-` replacing `/`.
 
   Example:
+
   - Mount point: `/mnt/external_drive`
   - Unit file: `/etc/systemd/system/mnt-external_drive.mount`
 
 - Open the file for editing:
+
   ```bash
   sudo nano /etc/systemd/system/mnt-external_drive.mount
   ```
 
 - Add the following content:
+
   ```ini
   [Unit]
   Description=Mount External Drive
@@ -151,17 +220,21 @@ This file contains the group and username for the Pi user. Ensure the informatio
   Replace `<UUID>` with the UUID from the `blkid` command, and update the `Type` field if necessary (e.g., `ntfs` for NTFS).
 
 #### Step 4: Enable and Start the Mount Unit
+
 - Reload `systemd` to recognize the new unit:
+
   ```bash
   sudo systemctl daemon-reload
   ```
 
 - Enable the mount to start automatically on boot:
+
   ```bash
   sudo systemctl enable mnt-external_drive.mount
   ```
 
 - Start the mount immediately:
+
   ```bash
   sudo systemctl start mnt-external_drive.mount
   ```
@@ -172,6 +245,7 @@ This file contains the group and username for the Pi user. Ensure the informatio
   ```
 
 #### Step 5: Verify and Test
+
 - Reboot your Raspberry Pi to confirm the drive mounts automatically.
 - If any issues arise, check the logs with:
   ```bash
@@ -180,7 +254,7 @@ This file contains the group and username for the Pi user. Ensure the informatio
 
 ---
 
-By following these steps, you ensure your external hard drive is consistently and securely mounted, 
+By following these steps, you ensure your external hard drive is consistently and securely mounted,
 offloading storage demands from your Raspberry Pi's SD card.
 
 ### 3. **Homepage Services**: [services.yaml](files/docker-compose/homepage/config/services.yaml)
@@ -204,7 +278,7 @@ Update the email address used for certificate issuance:
 certificatesResolvers:
   cloudflare:
     acme:
-      email: your-email@example.com
+      email: certificate@your.email
       storage: /cloudflare/acme.json
       dnsChallenge:
         provider: cloudflare
@@ -228,6 +302,7 @@ ansible-playbook main.yml
 AdGuard Home is a network-wide software for blocking ads and tracking. After you set it up, it'll cover ALL your home devices, and you don't need any client-side software for that.
 
 1. Open the following URL on your Raspberry Pi's IP address to begin the AdGuard setup:
+
    ```
    http://your-rpi-ip-here:3000/install.html
    ```
@@ -240,6 +315,7 @@ AdGuard Home is a network-wide software for blocking ads and tracking. After you
 3. Enter your desired **username** and **password**.
 
 4. Configure DNS in the AdGuard interface:
+
    - Go to `http://your-rpi-ip-here:8080/#dns`
    - Add upstream DNS servers like:
      - `1.1.1.1`
@@ -247,19 +323,27 @@ AdGuard Home is a network-wide software for blocking ads and tracking. After you
 
 5. Test and apply the upstream DNS settings.
 
-6. Add DNS rewrites for your custom domain:
+6. Add DNS rewrites for your custom domain\*\*:
+
    - Go to `http://your-rpi-ip-here:8080/#dns_rewrites`
    - Add a new DNS rewrite for:
      - **Domain**: `*.local.lowie.xyz`
      - **IP**: `your-rpi-ip-here`
 
-   Once your DNS is set to `your-rpi-ip-here`, you can access other services.
+7. Update DNS Settings on Your Machine:
+
+- Change your machine’s DNS server to the Raspberry Pi’s IP address (`your-rpi-ip-here`).
+  - On macOS or Windows: Update the DNS settings in your network adapter configuration.
+  - On Linux: Edit `/etc/resolv.conf` or update your network manager settings.
+
+Once configured, your custom domain (e.g., `service.local.lowie.xyz`) will correctly resolve through your Raspberry Pi.
 
 ## Step 10: Portainer Setup
 
 Portainer is a lightweight management UI that simplifies the deployment and management of Docker containers. It provides an intuitive interface for monitoring, configuring, and controlling your containers and services.
 
 1. To restart Portainer, use the following command if there is a timeout:
+
    ```zsh
    docker restart portainer
    ```
@@ -267,6 +351,7 @@ Portainer is a lightweight management UI that simplifies the deployment and mana
 2. Create an account in the Portainer interface.
 
 3. To generate an API token, visit:
+
    ```
    https://portainer.local.your.domain/#!/account/tokens/new
    ```
